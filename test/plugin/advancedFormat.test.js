@@ -69,6 +69,9 @@ it('Format Hour k kk 24-hour 1 - 24', () => {
   expect(dayjs(d).format('k')).toBe(moment(d).format('k'))
   expect(dayjs(d).format('kk')).toBe('23')
   expect(dayjs(d).format('kk')).toBe(moment(d).format('kk'))
+  d = '2020-01-01 06:00:00.000'
+  expect(dayjs(d).startHour(6).format('k')).toBe('30')
+  expect(dayjs(d).startHour(6).format('kk')).toBe('30')
 })
 
 it('Format Week of Year wo', () => {

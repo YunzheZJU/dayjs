@@ -28,7 +28,7 @@ export default (o, c, d) => { // locale needed later
           return utils.s(this.week(), match === 'w' ? 1 : 2, '0')
         case 'k':
         case 'kk':
-          return utils.s(String(this.$H === 0 ? 24 : this.$H), match === 'k' ? 1 : 2, '0')
+          return utils.s(String(this.hour() === this.startHour() ? this.startHour() + 24 : this.hour()), match === 'k' ? 1 : 2, '0')
         case 'X':
           return Math.floor(this.$d.getTime() / 1000)
         case 'x':

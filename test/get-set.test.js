@@ -2,6 +2,8 @@ import moment from 'moment'
 import MockDate from 'mockdate'
 import dayjs from '../src'
 
+const startHour = 6
+
 beforeEach(() => {
   MockDate.set(new Date())
 })
@@ -15,6 +17,9 @@ it('Year', () => {
   expect(dayjs().year()).toBe(moment().year())
   expect(dayjs().year(0).valueOf()).toBe(moment().year(0).valueOf())
   expect(dayjs().year(2000).valueOf()).toBe(moment().year(2000).valueOf())
+
+  const time = '2020-01-01T05:59:59.999'
+  expect(dayjs(time).startHour(startHour).year()).toBe(2019)
 })
 
 it('Month', () => {
@@ -22,6 +27,9 @@ it('Month', () => {
   expect(dayjs().month()).toBe(moment().month())
   expect(dayjs().month(0).valueOf()).toBe(moment().month(0).valueOf())
   expect(dayjs().month(1).valueOf()).toBe(moment().month(1).valueOf())
+
+  const time = '2020-01-01T05:59:59.999'
+  expect(dayjs(time).startHour(startHour).month()).toBe(11)
 })
 
 it('Day of Week', () => {
@@ -29,6 +37,9 @@ it('Day of Week', () => {
   expect(dayjs().day()).toBe(moment().day())
   expect(dayjs().day(0).format()).toBe(moment().day(0).format())
   expect(dayjs().day(1).format()).toBe(moment().day(1).format())
+
+  const time = '2020-01-01T05:59:59.999'
+  expect(dayjs(time).startHour(startHour).day()).toBe(2)
 })
 
 it('Date', () => {
@@ -36,6 +47,9 @@ it('Date', () => {
   expect(dayjs().date()).toBe(moment().date())
   expect(dayjs().date(0).valueOf()).toBe(moment().date(0).valueOf())
   expect(dayjs().date(1).valueOf()).toBe(moment().date(1).valueOf())
+
+  const time = '2020-01-01T05:59:59.999'
+  expect(dayjs(time).startHour(startHour).date()).toBe(31)
 })
 
 it('Hour', () => {
@@ -43,6 +57,9 @@ it('Hour', () => {
   expect(dayjs().hour()).toBe(moment().hour())
   expect(dayjs().hour(0).valueOf()).toBe(moment().hour(0).valueOf())
   expect(dayjs().hour(1).valueOf()).toBe(moment().hour(1).valueOf())
+
+  const time = '2020-01-01T05:59:59.999'
+  expect(dayjs(time).startHour(startHour).hour()).toBe(29)
 })
 
 it('Minute', () => {
@@ -68,22 +85,43 @@ it('Millisecond', () => {
 
 it('Set Day', () => {
   expect(dayjs().set('date', 30).valueOf()).toBe(moment().set('date', 30).valueOf())
+
+  const time = '2020-01-01T05:59:59.999'
+  expect(dayjs(time).startHour(startHour).date(30).date()).toBe(30)
+  expect(dayjs(time).startHour(startHour).date(30).month()).toBe(11)
 })
 
 it('Set Day of Week', () => {
   expect(dayjs().set('day', 0).valueOf()).toBe(moment().set('day', 0).valueOf())
+
+  const time = '2020-01-01T05:59:59.999'
+  expect(dayjs(time).startHour(startHour).day(1).day()).toBe(1)
 })
 
 it('Set Month', () => {
   expect(dayjs().set('month', 11).valueOf()).toBe(moment().set('month', 11).valueOf())
+
+  const time = '2020-01-01T05:59:59.999'
+  expect(dayjs(time).startHour(startHour).month(10).month()).toBe(10)
+  expect(dayjs(time).startHour(startHour).month(10).year()).toBe(2019)
 })
 
 it('Set Year', () => {
   expect(dayjs().set('year', 2008).valueOf()).toBe(moment().set('year', 2008).valueOf())
+
+  const time = '2020-01-01T05:59:59.999'
+  expect(dayjs(time).startHour(startHour).year(2019).year()).toBe(2019)
 })
 
 it('Set Hour', () => {
   expect(dayjs().set('hour', 6).valueOf()).toBe(moment().set('hour', 6).valueOf())
+
+  const time = '2020-01-01T05:59:59.999'
+  expect(dayjs(time).startHour(startHour).hour(12).hour()).toBe(12)
+  expect(dayjs(time).startHour(startHour).hour(12).date()).toBe(31)
+  expect(dayjs(time).startHour(startHour).hour(24).hour()).toBe(24)
+  expect(dayjs(time).startHour(startHour).hour(28).hour()).toBe(28)
+  expect(dayjs(time).startHour(startHour).hour(28).date()).toBe(31)
 })
 
 it('Set Minute', () => {

@@ -43,7 +43,9 @@ const wrapper = (date, instance) =>
   dayjs(date, {
     locale: instance.$L,
     utc: instance.$u,
-    $offset: instance.$offset // todo: refactor; do not use this.$offset in you code
+    // todo: refactor; do not use this.$offset in you code
+    $offset: instance.$offset,
+    $startHour: instance.$startHour
   })
 
 const Utils = U // for plugin use
@@ -76,6 +78,7 @@ const parseDate = (cfg) => {
 class Dayjs {
   constructor(cfg) {
     this.$L = this.$L || parseLocale(cfg.locale, null, true)
+    this.$startHour = Number(cfg.$startHour) || 0
     this.parse(cfg) // for plugin
   }
 
@@ -141,8 +144,8 @@ class Dayjs {
       return isStartOf ? ins : ins.endOf(C.D)
     }
     const instanceFactorySet = (method, slice) => {
-      const argumentStart = [0, 0, 0, 0]
-      const argumentEnd = [23, 59, 59, 999]
+      const argumentStart = [this.$startHour, 0, 0, 0]
+      const argumentEnd = [this.$startHour + 23, 59, 59, 999]
       return Utils.w(this.toDate()[method].apply( // eslint-disable-line prefer-spread
         this.toDate('s'),
         (isStartOf ? argumentStart : argumentEnd).slice(slice)
@@ -254,7 +257,13 @@ class Dayjs {
     const str = formatStr || C.FORMAT_DEFAULT
     const zoneStr = Utils.z(this)
     const locale = this.$locale()
-    const { $H, $m, $M } = this
+    const { $H, $m } = this
+    const y = this.year()
+    const M = this.month()
+    const D = this.date()
+    const W = this.day()
+    const H = this.hour()
+
     const {
       weekdays, months, meridiem
     } = locale
@@ -271,24 +280,24 @@ class Dayjs {
     })
 
     const matches = {
-      YY: String(this.$y).slice(-2),
-      YYYY: this.$y,
-      M: $M + 1,
-      MM: Utils.s($M + 1, 2, '0'),
-      MMM: getShort(locale.monthsShort, $M, months, 3),
-      MMMM: getShort(months, $M),
-      D: this.$D,
-      DD: Utils.s(this.$D, 2, '0'),
-      d: String(this.$W),
-      dd: getShort(locale.weekdaysMin, this.$W, weekdays, 2),
-      ddd: getShort(locale.weekdaysShort, this.$W, weekdays, 3),
-      dddd: weekdays[this.$W],
-      H: String($H),
-      HH: Utils.s($H, 2, '0'),
+      YY: String(y).slice(-2),
+      YYYY: y,
+      M: M + 1,
+      MM: Utils.s(M + 1, 2, '0'),
+      MMM: getShort(locale.monthsShort, M, months, 3),
+      MMMM: getShort(months, M),
+      D,
+      DD: Utils.s(D, 2, '0'),
+      d: String(W),
+      dd: getShort(locale.weekdaysMin, W, weekdays, 2),
+      ddd: getShort(locale.weekdaysShort, W, weekdays, 3),
+      dddd: weekdays[W],
+      H: String(H),
+      HH: Utils.s(H, 2, '0'),
       h: get$H(1),
       hh: get$H(2),
-      a: meridiemFunc($H, $m, true),
-      A: meridiemFunc($H, $m, false),
+      a: meridiemFunc(H, $m, true),
+      A: meridiemFunc(H, $m, false),
       m: String($m),
       mm: Utils.s($m, 2, '0'),
       s: String(this.$s),
@@ -343,6 +352,13 @@ class Dayjs {
     return that
   }
 
+  startHour(value) {
+    if (Utils.u(value)) return this.$startHour
+    const that = this.clone()
+    that.$startHour = value
+    return that
+  }
+
   clone() {
     return Utils.w(this.$d, this)
   }
@@ -382,7 +398,34 @@ dayjs.prototype = proto;
   proto[g[1]] = function (input) {
     return this.$g(input, g[0], g[1])
   }
+});
+
+[C.D, C.M, C.Y, C.DATE].forEach((method) => {
+  const oldMethod = proto[method]
+  proto[method] = function (arg) {
+    if (this.$H >= this.$startHour) {
+      return oldMethod.bind(this)(arg)
+    }
+    if (Utils.u(arg)) {
+      return oldMethod.bind(this.startHour(0).subtract(1, 'd'))()
+    }
+    return oldMethod.bind(this.startHour(0).subtract(1, 'd'))(arg).add(1, 'd').startHour(this.$startHour)
+  }
 })
+
+const oldHour = proto[C.H]
+proto[C.H] = function (arg) {
+  if (this.$H >= this.$startHour) {
+    return oldHour.bind(this)(arg)
+  }
+  if (Utils.u(arg)) {
+    return oldHour.bind(this)() + 24
+  }
+  if (Number(arg) > 24) {
+    return oldHour.bind(this.startHour(0))(arg - 24).startHour(this.$startHour)
+  }
+  return oldHour.bind(this.startHour(0).subtract(1, 'd'))(arg).startHour(this.$startHour)
+}
 
 dayjs.extend = (plugin, option) => {
   plugin(option, Dayjs, dayjs)

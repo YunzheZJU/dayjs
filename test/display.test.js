@@ -4,6 +4,8 @@ import dayjs from '../src'
 import th from '../src/locale/th'
 import '../src/locale/ja'
 
+const startHour = 6
+
 beforeEach(() => {
   MockDate.set(new Date())
 })
@@ -24,6 +26,9 @@ it('Format invalid date', () => {
 it('Format Year YY YYYY', () => {
   expect(dayjs().format('YY')).toBe(moment().format('YY'))
   expect(dayjs().format('YYYY')).toBe(moment().format('YYYY'))
+
+  const time = '2020-01-01T05:59:59.999'
+  expect(dayjs(time).startHour(startHour).format('YYYY')).toBe('2019')
 })
 
 it('Format Month M MM MMM MMMM', () => {
@@ -31,11 +36,17 @@ it('Format Month M MM MMM MMMM', () => {
   expect(dayjs().format('MM')).toBe(moment().format('MM'))
   expect(dayjs().format('MMM')).toBe(moment().format('MMM'))
   expect(dayjs().format('MMMM')).toBe(moment().format('MMMM'))
+
+  const time = '2020-01-01T05:59:59.999'
+  expect(dayjs(time).startHour(startHour).format('M')).toBe('12')
 })
 
 it('Format Day of Month D DD 1 - 31', () => {
   expect(dayjs().format('D')).toBe(moment().format('D'))
   expect(dayjs().format('DD')).toBe(moment().format('DD'))
+
+  const time = '2020-01-01T05:59:59.999'
+  expect(dayjs(time).startHour(startHour).format('D')).toBe('31')
 })
 
 it('Format Day of Week d Sun - Sat', () => {
@@ -43,11 +54,24 @@ it('Format Day of Week d Sun - Sat', () => {
   expect(dayjs().format('dd')).toBe(moment().format('dd'))
   expect(dayjs().format('ddd')).toBe(moment().format('ddd'))
   expect(dayjs().format('dddd')).toBe(moment().format('dddd'))
+
+  const time = '2020-01-01T05:59:59.999'
+  expect(dayjs(time).startHour(startHour).format('d')).toBe('2')
 })
 
 it('Format Hour H HH 24-hour', () => {
   expect(dayjs().format('H')).toBe(moment().format('H'))
   expect(dayjs().format('HH')).toBe(moment().format('HH'))
+
+  const time = '2020-12-20T00:00:00.000'
+  const expected = '24'
+  expect(dayjs(time).startHour(startHour).format('HH')).toBe(expected)
+  const time2 = '2020-12-20T05:59:59.999'
+  const expected2 = '29'
+  expect(dayjs(time2).startHour(startHour).format('HH')).toBe(expected2)
+  const time3 = '2020-12-20T06:00:00.000'
+  const expected3 = '06'
+  expect(dayjs(time3).startHour(startHour).format('HH')).toBe(expected3)
 })
 
 it('Format Hour h hh 12-hour', () => {
@@ -90,6 +114,16 @@ it('Format meridiens a A am / pm', () => {
   expect(dayjs(time2).locale('ja').format('a')).toBe('午後')
   expect(dayjs(time2).locale('ja').format('a'))
     .toBe(moment(time2).locale('ja').format('a'))
+
+  const time3 = '2020-12-20T05:59:59.999'
+  expect(dayjs(time3).startHour(startHour).format('a')).toBe('pm')
+  expect(dayjs(time3).startHour(startHour).format('A')).toBe('PM')
+  expect(dayjs(time3).startHour(startHour).locale('ja').format('a')).toBe('午後')
+
+  const time4 = '2020-12-20T06:00:00.000'
+  expect(dayjs(time4).startHour(startHour).format('a')).toBe('am')
+  expect(dayjs(time4).startHour(startHour).format('A')).toBe('AM')
+  expect(dayjs(time4).startHour(startHour).locale('ja').format('a')).toBe('午前')
 })
 
 it('Format Minute m mm', () => {
