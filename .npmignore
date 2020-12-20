@@ -29,3 +29,6 @@ docs
 .travis.yml
 karma.sauce.conf.js
 .github
+
+#package
+*.tgz
