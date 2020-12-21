@@ -1,6 +1,6 @@
 {
-  "name": "@yunzhezju/dayjs",
-  "version": "1.8.36-alpha.2",
+  "name": "@yunzhe35p/dayjs",
+  "version": "1.8.36-alpha.3",
   "description": "Modified dayjs with 30-hour clock support. 2KB immutable date time library alternative to Moment.js with the same modern API ",
   "main": "dayjs.min.js",
   "types": "index.d.ts",
@@ -67,9 +67,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/yunzhezju/dayjs.git"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.44",
