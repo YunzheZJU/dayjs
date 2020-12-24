@@ -12,7 +12,7 @@ export default (o, c, d) => {
   const proto = c.prototype
   proto.calendar = function (referenceTime, formats) {
     const format = formats || this.$locale().calendar || calendarFormat
-    const referenceStartOfDay = d(referenceTime || undefined).startOf('d')
+    const referenceStartOfDay = d(referenceTime || undefined).startHour(this.$startHour).startOf('d')
     const diff = this.diff(referenceStartOfDay, 'd', true)
     const sameElse = 'sameElse'
     /* eslint-disable no-nested-ternary */

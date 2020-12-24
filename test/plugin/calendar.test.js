@@ -118,7 +118,7 @@ it('ReferenceTime with start hour', () => {
     }
   ]
   dates.forEach((d) => {
-    const dayjsResult = dayjs(now).startHour(6).calendar(dayjs(d.date).startHour(6))
+    const dayjsResult = dayjs(now).startHour(6).calendar(d.date)
     expect(dayjsResult.indexOf(d.result) > -1).toBe(true)
   })
 })
