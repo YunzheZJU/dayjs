@@ -39,6 +39,48 @@ describe('StartOf EndOf', () => {
       })
     })
   })
+
+  it('startOf EndOf Year ... with start hour', () => {
+    const time = '2020-01-01T05:59:59.999'
+    const dates = [{
+      name: 'year',
+      start: '2019-01-01T06:00:00.000',
+      end: '2020-01-01T05:59:59.999'
+    }, {
+      name: 'month',
+      start: '2019-12-01T06:00:00.000',
+      end: '2020-01-01T05:59:59.999'
+    }, {
+      name: 'week',
+      start: '2019-12-29T06:00:00.000',
+      end: '2020-01-05T05:59:59.999'
+    }, {
+      name: 'date',
+      start: '2019-12-31T06:00:00.000',
+      end: '2020-01-01T05:59:59.999'
+    }, {
+      name: 'hour',
+      start: '2020-01-01T05:00:00.000',
+      end: '2020-01-01T05:59:59.999'
+    }, {
+      name: 'minute',
+      start: '2020-01-01T05:59:00.000',
+      end: '2020-01-01T05:59:59.999'
+    }, {
+      name: 'second',
+      start: '2020-01-01T05:59:59.000',
+      end: '2020-01-01T05:59:59.999'
+    }]
+    const testArr = ['year', 'month', 'day', 'date', 'hour', 'minute', 'second']
+    dates.forEach((d) => {
+      testArr.forEach((test) => {
+        expect(dayjs(time).startHour(6).startOf(d.name)[test]())
+          .toBe(dayjs(d.start).startHour(6)[test]())
+        expect(dayjs(time).startHour(6).endOf(d.name)[test]())
+          .toBe(dayjs(d.end).startHour(6)[test]())
+      })
+    })
+  })
 })
 
 

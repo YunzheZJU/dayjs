@@ -138,20 +138,24 @@ class Dayjs {
   startOf(units, startOf) { // startOf -> endOf
     const isStartOf = !Utils.u(startOf) ? startOf : true
     const unit = Utils.p(units)
+    const $y = this.year()
+    const $startHour = this.startHour()
     const instanceFactory = (d, m) => {
       const ins = Utils.w(this.$u ?
-        Date.UTC(this.$y, m, d) : new Date(this.$y, m, d), this)
+        Date.UTC($y, m, d) : new Date($y, m, d), this).add($startHour, 'hour')
       return isStartOf ? ins : ins.endOf(C.D)
     }
     const instanceFactorySet = (method, slice) => {
-      const argumentStart = [this.$startHour, 0, 0, 0]
-      const argumentEnd = [this.$startHour + 23, 59, 59, 999]
+      const argumentStart = [$startHour, 0, 0, 0]
+      const argumentEnd = [$startHour + 23, 59, 59, 999]
       return Utils.w(this.toDate()[method].apply( // eslint-disable-line prefer-spread
         this.toDate('s'),
         (isStartOf ? argumentStart : argumentEnd).slice(slice)
       ), this)
     }
-    const { $W, $M, $D } = this
+    const $M = this.month()
+    const $W = this.day()
+    const $D = this.date()
     const utcPad = `set${this.$u ? 'UTC' : ''}`
     switch (unit) {
       case C.Y:
@@ -167,6 +171,12 @@ class Dayjs {
       }
       case C.D:
       case C.DATE:
+        if (this.$startHour > 0) {
+          return this.startHour(0).subtract(this.$startHour, 'hour')
+            .startOf(units, startOf)
+            .add(this.$startHour, 'hour')
+            .startHour(this.$startHour)
+        }
         return instanceFactorySet(`${utcPad}Hours`, 0)
       case C.H:
         return instanceFactorySet(`${utcPad}Minutes`, 1)
@@ -403,7 +413,7 @@ dayjs.prototype = proto;
 [C.D, C.M, C.Y, C.DATE].forEach((method) => {
   const oldMethod = proto[method]
   proto[method] = function (arg) {
-    if (this.$H >= this.$startHour) {
+    if (Number.isNaN(this.$H) || this.$H >= this.$startHour) {
       return oldMethod.bind(this)(arg)
     }
     if (Utils.u(arg)) {
@@ -415,7 +425,7 @@ dayjs.prototype = proto;
 
 const oldHour = proto[C.H]
 proto[C.H] = function (arg) {
-  if (this.$H >= this.$startHour) {
+  if (Number.isNaN(this.$H) || this.$H >= this.$startHour) {
     return oldHour.bind(this)(arg)
   }
   if (Utils.u(arg)) {

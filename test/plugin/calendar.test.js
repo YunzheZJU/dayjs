@@ -68,6 +68,61 @@ it('ReferenceTime', () => {
   })
 })
 
+it('ReferenceTime with start hour', () => {
+  const now = '2020-01-01T05:59:59.999'
+  const dates = [
+    {
+      name: 'nextDay',
+      date: '2019-12-31T05:59:59.999',
+      result: 'Tomorrow'
+    },
+    {
+      name: 'nextDay',
+      date: '2019-12-30T06:00:00.000',
+      result: 'Tomorrow'
+    },
+    {
+      name: 'sameDay',
+      date: '2019-12-31T06:00:00.000',
+      result: 'Today'
+    },
+    {
+      name: 'nextWeek',
+      date: '2019-12-26T06:00:00.000',
+      result: 'Tuesday'
+    },
+    {
+      name: 'lastDay',
+      date: '2020-01-01T06:00:00.000',
+      result: 'Yesterday'
+    },
+    {
+      name: 'lastDay',
+      date: '2020-01-02T05:59:59.999',
+      result: 'Yesterday'
+    },
+    {
+      name: 'lastWeek',
+      date: '2020-01-07T05:59:59.999',
+      result: 'Last'
+    },
+    {
+      name: 'sameElse',
+      date: '2019-12-25T05:59:59.999',
+      result: '12/31/2019'
+    },
+    {
+      name: 'sameElse',
+      date: '2020-01-08T05:59:59.999',
+      result: '12/31/2019'
+    }
+  ]
+  dates.forEach((d) => {
+    const dayjsResult = dayjs(now).startHour(6).calendar(dayjs(d.date).startHour(6))
+    expect(dayjsResult.indexOf(d.result) > -1).toBe(true)
+  })
+})
+
 it('Custom format', () => {
   const format = {
     sameDay: '[sameDay]',
