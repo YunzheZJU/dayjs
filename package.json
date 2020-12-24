@@ -1,6 +1,6 @@
 {
   "name": "@yunzhe35p/dayjs",
-  "version": "1.8.36-alpha.3",
+  "version": "1.8.36-alpha.4",
   "description": "Modified dayjs with 30-hour clock support. 2KB immutable date time library alternative to Moment.js with the same modern API ",
   "main": "dayjs.min.js",
   "types": "index.d.ts",
